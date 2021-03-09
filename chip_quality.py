@@ -13,6 +13,7 @@ from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
 
 #加载数据及可视化
 data = pd.read_csv('task2_data.csv')
@@ -90,4 +91,39 @@ plt.title('chip data')
 plt.xlabel('size 1')
 plt.ylabel('size 2')
 plt.legend()
+plt.show()
+#计算混淆矩阵
+cm = confusion_matrix(y_test,y_test_predict)
+print(cm)
+#获取混淆矩阵元素
+TP = cm[1,1]
+TN = cm[0,0]
+FP = cm[0,1]
+FN = cm[1,0]
+recall = TP/(TP+FN)
+precison = TP/(TP+FP)
+specificity = TN/(TN+FP)
+print(recall,specificity,precison)
+f1 = 2*precison*recall/(precison+recall)
+print(f1)
+#尝试不同的K值
+n = [i for i in range(1,21)]
+accuracy_train = []
+accuracy_test = []
+for i in n:
+    knn_i = KNeighborsClassifier(n_neighbors=i)
+    knn_i.fit(x_train,y_train)
+    y_train_predict = knn_i.predict(x_train)
+    y_test_predict = knn_i.predict(x_test)
+    accuracy_train_i = accuracy_score(y_train,y_train_predict)
+    accuracy_test_i = accuracy_score(y_test,y_test_predict)
+    accuracy_train.append(accuracy_train_i)
+    accuracy_test.append(accuracy_test_i)
+print(accuracy_train,accuracy_test)
+fig5 = plt.figure(figsize=(12,5))
+plt.subplots(121)
+plt.plot(n,accuracy_train,marker='o')
+plt.title('train data accuracy')
+plt.xlabel('k')
+plt.ylabel('k')
 plt.show()
